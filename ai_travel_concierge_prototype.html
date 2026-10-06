@@ -1,500 +1,555 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Travel Concierge - Demo</title>
     <style>
-        :root {
-            --line-green: #06C755;
-            --chat-bg: #8b9eb0;
-            --msg-sent: #06C755;
-            --msg-recv: #FFFFFF;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1a2e;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            flex-direction: column;
-        }
-        
-        /* คำแนะนำการใช้งานด้านบน */
-        .instruction-box {
-            margin-bottom: 20px;
-            text-align: center;
-            background: #0f3460;
-            padding: 15px 25px;
-            border-radius: 12px;
-            border: 1px solid #e94560;
-            max-width: 420px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .instruction-box h3 { margin: 0 0 10px 0; color: #e94560; }
-        .instruction-box p { margin: 5px 0; font-size: 13px; line-height: 1.4; }
-        .instruction-box code { background: #1a1a2e; padding: 2px 6px; border-radius: 4px; color: var(--line-green); font-weight: bold;}
-        
-        /* กรอบโทรศัพท์จำลอง */
-        .phone-mockup {
-            width: 375px;
-            height: 812px;
-            background-color: #fff;
-            border: 12px solid #333;
-            border-radius: 40px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* หัวแชท LINE */
-        .chat-header {
-            background-color: #272727;
-            color: white;
-            padding: 15px 20px;
-            font-size: 18px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-        }
+      :root {
+        --line-green: #06c755;
+        --chat-bg: #8b9eb0;
+        --msg-sent: #06c755;
+        --msg-recv: #ffffff;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #1a1a2e;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        flex-direction: column;
+      }
 
-        /* พื้นที่แชท */
-        .chat-body {
-            flex: 1;
-            background-color: var(--chat-bg);
-            padding: 20px 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+      /* คำแนะนำการใช้งานด้านบน */
+      .instruction-box {
+        margin-bottom: 20px;
+        text-align: center;
+        background: #0f3460;
+        padding: 15px 25px;
+        border-radius: 12px;
+        border: 1px solid #e94560;
+        max-width: 420px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+      .instruction-box h3 {
+        margin: 0 0 10px 0;
+        color: #e94560;
+      }
+      .instruction-box p {
+        margin: 5px 0;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .instruction-box code {
+        background: #1a1a2e;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--line-green);
+        font-weight: bold;
+      }
 
-        /* โครงสร้างแถวข้อความ */
-        .msg-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            width: 100%;
-            animation: fadeIn 0.3s ease-out forwards;
-            opacity: 0;
-            transform: translateY(10px);
-            flex-shrink: 0;
-        }
-        .msg-row.left { justify-content: flex-start; }
-        .msg-row.right { justify-content: flex-end; }
+      /* กรอบโทรศัพท์จำลอง */
+      .phone-mockup {
+        width: 375px;
+        height: 812px;
+        background-color: #fff;
+        border: 12px solid #333;
+        border-radius: 40px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+      }
 
-        /* รูปโปรไฟล์ Avatar */
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            background-size: cover;
-            background-position: center;
-        }
-        .avatar-ai { background-image: url('https://ui-avatars.com/api/?name=AI&background=0f3460&color=fff'); }
-        .avatar-f1 { background-image: url('https://ui-avatars.com/api/?name=B&background=e94560&color=fff'); }
-        .avatar-f2 { background-image: url('https://ui-avatars.com/api/?name=C&background=e67e22&color=fff'); }
+      /* หัวแชท LINE */
+      .chat-header {
+        background-color: #272727;
+        color: white;
+        padding: 15px 20px;
+        font-size: 18px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+      }
 
-        /* กล่องข้อความ */
-        .message {
-            max-width: 75%;
-            padding: 10px 14px;
-            font-size: 14px;
-            line-height: 1.4;
-            color: #333;
-            flex-shrink: 0;
-            word-break: break-word;
-        }
-        .msg-ai, .msg-friend {
-            background-color: var(--msg-recv);
-            border-radius: 18px 18px 18px 4px;
-        }
-        .msg-me {
-            background-color: var(--line-green);
-            color: white;
-            border-radius: 18px 18px 4px 18px;
-        }
-        .msg-sys {
-            background-color: rgba(0,0,0,0.5);
-            color: white;
-            align-self: center;
-            font-size: 12px;
-            border-radius: 20px;
-            padding: 5px 15px;
-            text-align: center;
-            flex-shrink: 0;
-            max-width: 90%;
-            animation: fadeIn 0.3s ease-out forwards;
-            opacity: 0;
-            transform: translateY(10px);
-            margin: 4px auto;
-        }
+      /* พื้นที่แชท */
+      .chat-body {
+        flex: 1;
+        background-color: var(--chat-bg);
+        padding: 20px 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
 
-        /* การ์ด Flex Message */
-        .flex-card {
-            background: white;
-            border-radius: 18px 18px 18px 4px;
-            overflow: hidden;
-            width: 260px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            flex-shrink: 0;
-        }
-        .flex-header {
-            background-color: #0f3460;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 13px;
-        }
-        .flex-body {
-            padding: 15px;
-            color: #333;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-        .flex-btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            text-align: center;
-            background-color: #f1f1f1;
-            color: #333;
-            text-decoration: none;
-            border-top: 1px solid #ddd;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .flex-btn.download {
-            background-color: var(--line-green);
-            color: white;
-            border: none;
-        }
-        
-        /* ภาพสลิปโอนเงิน */
-        .slip-img {
-            width: 150px;
-            border-radius: 18px 18px 4px 18px;
-            border: 2px solid white;
-            flex-shrink: 0; 
-        }
+      /* โครงสร้างแถวข้อความ */
+      .msg-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        width: 100%;
+        animation: fadeIn 0.3s ease-out forwards;
+        opacity: 0;
+        transform: translateY(10px);
+        flex-shrink: 0;
+      }
+      .msg-row.left {
+        justify-content: flex-start;
+      }
+      .msg-row.right {
+        justify-content: flex-end;
+      }
 
-        /* ช่องพิมพ์ข้อความ (Input Area) */
-        .chat-input-area {
-            background-color: #f5f5f5;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-top: 1px solid #ddd;
-            z-index: 10;
-        }
-        .attach-btn {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: #666;
-            padding: 5px;
-            border-radius: 50%;
-            transition: 0.2s;
-            flex-shrink: 0;
-        }
-        .attach-btn:hover { background: #e0e0e0; }
-        .chat-input-field {
-            flex: 1;
-            padding: 10px 15px;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            outline: none;
-            font-size: 14px;
-        }
-        .send-btn {
-            background-color: var(--line-green);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            transition: 0.2s;
-            flex-shrink: 0;
-        }
-        .send-btn:hover { background-color: #05a044; }
+      /* รูปโปรไฟล์ Avatar */
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background-size: cover;
+        background-position: center;
+      }
+      .avatar-ai {
+        background-image: url("https://ui-avatars.com/api/?name=AI&background=0f3460&color=fff");
+      }
+      .avatar-f1 {
+        background-image: url("https://ui-avatars.com/api/?name=B&background=e94560&color=fff");
+      }
+      .avatar-f2 {
+        background-image: url("https://ui-avatars.com/api/?name=C&background=e67e22&color=fff");
+      }
 
-        /* หน้าต่าง LIFF Overlay */
-        .liff-overlay {
-            position: absolute;
-            bottom: -100%; 
-            left: 0;
-            width: 100%;
-            height: 85%;
-            background-color: white;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            z-index: 20;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.2);
-        }
-        .liff-overlay.active { bottom: 0; }
-        .liff-header {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-            font-weight: bold;
-            color: #333;
-            position: relative;
-        }
-        .close-liff {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            cursor: pointer;
-            color: #888;
-        }
-        .liff-content {
-            padding: 20px;
-            flex: 1;
-            overflow-y: auto;
-            color: #333;
-        }
-        .hotel-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-            background: #fafafa;
-        }
-        .confirm-btn {
-            background-color: var(--line-green);
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: auto;
-        }
+      /* กล่องข้อความ */
+      .message {
+        max-width: 75%;
+        padding: 10px 14px;
+        font-size: 14px;
+        line-height: 1.4;
+        color: #333;
+        flex-shrink: 0;
+        word-break: break-word;
+      }
+      .msg-ai,
+      .msg-friend {
+        background-color: var(--msg-recv);
+        border-radius: 18px 18px 18px 4px;
+      }
+      .msg-me {
+        background-color: var(--line-green);
+        color: white;
+        border-radius: 18px 18px 4px 18px;
+      }
+      .msg-sys {
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        align-self: center;
+        font-size: 12px;
+        border-radius: 20px;
+        padding: 5px 15px;
+        text-align: center;
+        flex-shrink: 0;
+        max-width: 90%;
+        animation: fadeIn 0.3s ease-out forwards;
+        opacity: 0;
+        transform: translateY(10px);
+        margin: 4px auto;
+      }
 
-        @keyframes fadeIn {
-            to { opacity: 1; transform: translateY(0); }
+      /* การ์ด Flex Message */
+      .flex-card {
+        background: white;
+        border-radius: 18px 18px 18px 4px;
+        overflow: hidden;
+        width: 260px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+      }
+      .flex-header {
+        background-color: #0f3460;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 13px;
+      }
+      .flex-body {
+        padding: 15px;
+        color: #333;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .flex-btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+        background-color: #f1f1f1;
+        color: #333;
+        text-decoration: none;
+        border-top: 1px solid #ddd;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      .flex-btn.download {
+        background-color: var(--line-green);
+        color: white;
+        border: none;
+      }
+
+      /* ภาพสลิปโอนเงิน */
+      .slip-img {
+        width: 160px;
+        border-radius: 14px;
+        border: 2px solid white;
+        flex-shrink: 0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      /* ช่องพิมพ์ข้อความ (Input Area) */
+      .chat-input-area {
+        background-color: #f5f5f5;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-top: 1px solid #ddd;
+        z-index: 10;
+      }
+      .attach-btn {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #666;
+        padding: 5px;
+        border-radius: 50%;
+        transition: 0.2s;
+        flex-shrink: 0;
+      }
+      .attach-btn:hover {
+        background: #e0e0e0;
+      }
+      .chat-input-field {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        outline: none;
+        font-size: 14px;
+      }
+      .send-btn {
+        background-color: var(--line-green);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        transition: 0.2s;
+        flex-shrink: 0;
+      }
+      .send-btn:hover {
+        background-color: #05a044;
+      }
+
+      /* หน้าต่าง LIFF Overlay */
+      .liff-overlay {
+        position: absolute;
+        bottom: -100%;
+        left: 0;
+        width: 100%;
+        height: 85%;
+        background-color: white;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        flex-direction: column;
+        z-index: 20;
+        box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.2);
+      }
+      .liff-overlay.active {
+        bottom: 0;
+      }
+      .liff-header {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        font-weight: bold;
+        color: #333;
+        position: relative;
+      }
+      .close-liff {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        cursor: pointer;
+        color: #888;
+      }
+      .liff-content {
+        padding: 20px;
+        flex: 1;
+        overflow-y: auto;
+        color: #333;
+      }
+      .hotel-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        background: #fafafa;
+      }
+      .confirm-btn {
+        background-color: var(--line-green);
+        color: white;
+        border: none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: auto;
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="instruction-box">
-        <h3>💡 วิธีทดสอบระบบ (Interactive Demo)</h3>
-        <p>1. พิมพ์คำสั่ง <code>เริ่ม</code> เพื่อเปิด AI บันทึกข้อมูล</p>
-        <p>2. เพื่อนๆ ในกลุ่มจะทยอยพิมพ์รายละเอียดทริป</p>
-        <p>3. พิมพ์คำว่า <code>จบ</code> เพื่อให้ AI สรุปและเปิดโหวต</p>
-        <p>4. เมื่อถึงขั้นตอนโอนเงิน ให้กดปุ่ม <b>[+]</b> เพื่อส่งสลิปจำลอง</p>
+      <h3>💡 วิธีทดสอบระบบ (Interactive Demo)</h3>
+      <p>1. พิมพ์คำสั่ง <code>เริ่ม</code> เพื่อเปิด AI บันทึกข้อมูล</p>
+      <p>2. เพื่อนๆ ในกลุ่มจะทยอยพิมพ์รายละเอียดทริป</p>
+      <p>3. พิมพ์คำว่า <code>จบ</code> เพื่อให้ AI สรุปและเปิดโหวต</p>
+      <p>4. เมื่อถึงขั้นตอนโอนเงิน ให้กดปุ่ม <b>[+]</b> เพื่อส่งสลิปจริง</p>
     </div>
 
-    <!-- จำลองหน้าจอโทรศัพท์ -->
     <div class="phone-mockup">
-        <div class="chat-header">
-            <span>&lt; แก็งค์ทริปหัวหิน (4)</span>
-            <span>≡</span>
-        </div>
-        
-        <div class="chat-body" id="chatbox">
-            <div class="msg-sys">AI Concierge เข้าร่วมกลุ่มแล้ว (สถานะ: ปิดบันทึก)</div>
-            
-            <div class="msg-row right">
-                <div class="message msg-me">ทุกคน ทริปหัวหินเสาร์นี้เอาไงดี?</div>
-            </div>
-            <div class="msg-row left">
-                <div class="avatar avatar-f1"></div>
-                <div class="message msg-friend">จัดเลยๆ เดี๋ยวขอเช็คงานแป๊บ</div>
-            </div>
+      <div class="chat-header">
+        <span>&lt; แก็งค์ทริปหัวหิน (4)</span>
+        <span>≡</span>
+      </div>
+
+      <div class="chat-body" id="chatbox">
+        <div class="msg-sys">
+          AI Concierge เข้าร่วมกลุ่มแล้ว (สถานะ: ปิดบันทึก)
         </div>
 
-        <!-- พื้นที่พิมพ์ข้อความ -->
-        <div class="chat-input-area">
-            <button class="attach-btn" title="ส่งสลิปจำลอง" onclick="sendMockSlip()">➕</button>
-            <input type="text" id="chatInput" class="chat-input-field" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
-            <button class="send-btn" onclick="processInput()">➤</button>
+        <div class="msg-row right">
+          <div class="message msg-me">ทุกคน ทริปหัวหินเสาร์นี้เอาไงดี?</div>
         </div>
+        <div class="msg-row left">
+          <div class="avatar avatar-f1"></div>
+          <div class="message msg-friend">จัดเลยๆ เดี๋ยวขอเช็คงานแป๊บ</div>
+        </div>
+      </div>
 
-        <!-- จำลอง LINE LIFF -->
-        <div class="liff-overlay" id="liffApp">
-            <div class="liff-header">
-                Hotel Consensus (LIFF)
-                <span class="close-liff" onclick="closeLiff()">✕</span>
-            </div>
-            <div class="liff-content">
-                <!-- Content injected dynamically -->
-            </div>
+      <!-- พื้นที่พิมพ์ข้อความ -->
+      <div class="chat-input-area">
+        <button
+          class="attach-btn"
+          title="ส่งสลิปโอนเงินจริง"
+          onclick="sendMockSlip()"
+        >
+          ➕
+        </button>
+        <input
+          type="text"
+          id="chatInput"
+          class="chat-input-field"
+          placeholder="พิมพ์ข้อความ..."
+          onkeypress="handleEnter(event)"
+        />
+        <button class="send-btn" onclick="processInput()">➤</button>
+      </div>
+
+      <!-- จำลอง LINE LIFF -->
+      <div class="liff-overlay" id="liffApp">
+        <div class="liff-header">
+          Hotel Consensus (LIFF)
+          <span class="close-liff" onclick="closeLiff()">✕</span>
         </div>
+        <div class="liff-content">
+          <!-- Content injected dynamically -->
+        </div>
+      </div>
     </div>
 
     <script>
-        const chatbox = document.getElementById('chatbox');
-        const chatInput = document.getElementById('chatInput');
-        const liffApp = document.getElementById('liffApp');
-        
-        let recordingActive = false; // สถานะ AI บันทึกข้อมูล
-        let paymentStage = false;   // สถานะรอจ่ายเงิน
+      const chatbox = document.getElementById("chatbox");
+      const chatInput = document.getElementById("chatInput");
+      const liffApp = document.getElementById("liffApp");
 
-        // ฟังก์ชันจัดการการกด Enter
-        function handleEnter(e) {
-            if (e.key === 'Enter') {
-                processInput();
-            }
+      let recordingActive = false; // สถานะ AI บันทึกข้อมูล
+      let paymentStage = false; // สถานะรอจ่ายเงิน
+
+      function handleEnter(e) {
+        if (e.key === "Enter") {
+          processInput();
         }
+      }
 
-        // ฟังก์ชันส่งและประมวลผลข้อความ
-        function processInput() {
-            const text = chatInput.value.trim();
-            if (!text) return;
+      function processInput() {
+        const text = chatInput.value.trim();
+        if (!text) return;
 
-            // แสดงข้อความที่เราพิมพ์ฝั่งขวา
-            appendMessage(text, 'right', 'me');
-            chatInput.value = '';
-            scrollToBottom();
+        appendMessage(text, "right", "me");
+        chatInput.value = "";
+        scrollToBottom();
 
-            const lowerText = text.toLowerCase();
+        const lowerText = text.toLowerCase();
 
-            // 1. คำสั่งเริ่มบันทึกข้อมูล
-            if (!recordingActive && (lowerText.includes('เริ่ม') || lowerText.includes('บันทึก') || lowerText.includes('สกัด'))) {
-                recordingActive = true;
-                setTimeout(() => {
-                    appendSystemMessage('🤖 เริ่มบันทึกข้อมูล');
-                    // จำลองเพื่อนในกลุ่มทยอยพิมพ์รายละเอียดทริปหลังจาก AI เริ่มบันทึก
-                    simulateFriendsConversation();
-                }, 400);
-            } 
-            // 2. คำสั่งจบการบันทึกข้อมูล
-            else if (recordingActive && (lowerText.includes('จบ') || lowerText.includes('พอแค่นี้') || lowerText.includes('สรุป'))) {
-                recordingActive = false;
-                setTimeout(() => {
-                    appendSystemMessage('🤖 สิ้นสุดการบันทึกข้อมูล กำลังประมวลผล...');
-                    setTimeout(triggerAIAnalysis, 800);
-                }, 400);
-            }
-            // 3. กำลังอยู่ในช่วงบันทึกข้อมูล
-            else if (recordingActive) {
-                setTimeout(() => {
-                    appendSystemMessage('🤖 [Auto-Capture] บันทึกเงื่อนไขลง State เรียบร้อย');
-                }, 500);
-            }
+        if (
+          !recordingActive &&
+          (lowerText.includes("เริ่ม") ||
+            lowerText.includes("บันทึก") ||
+            lowerText.includes("สกัด"))
+        ) {
+          recordingActive = true;
+          setTimeout(() => {
+            appendSystemMessage("🤖 เริ่มบันทึกข้อมูล");
+            simulateFriendsConversation();
+          }, 400);
+        } else if (
+          recordingActive &&
+          (lowerText.includes("จบ") ||
+            lowerText.includes("พอแค่นี้") ||
+            lowerText.includes("สรุป"))
+        ) {
+          recordingActive = false;
+          setTimeout(() => {
+            appendSystemMessage("🤖 สิ้นสุดการบันทึกข้อมูล กำลังประมวลผล...");
+            setTimeout(triggerAIAnalysis, 800);
+          }, 400);
+        } else if (recordingActive) {
+          setTimeout(() => {
+            appendSystemMessage(
+              "🤖 [Auto-Capture] บันทึกเงื่อนไขลง State เรียบร้อย",
+            );
+          }, 500);
         }
+      }
 
-        // ฟังก์ชันจำลองเพื่อนในกลุ่มทยอยพิมพ์รายละเอียดทีละคน
-        function simulateFriendsConversation() {
-            setTimeout(() => {
-                appendFriendMessage("ผมขอไม่เกิน 1,500 นะ ช่วงนี้ช็อตสุดๆ 😅", "f1");
-            }, 1000);
+      function simulateFriendsConversation() {
+        setTimeout(() => {
+          appendFriendMessage("ผมขอไม่เกิน 1,500 นะ ช่วงนี้ช็อตสุดๆ 😅", "f1");
+        }, 1000);
 
-            setTimeout(() => {
-                appendFriendMessage("ชั้นขอมีสระว่ายน้ำด้วยนะทุกคน ถ่ายรูปสวยๆ", "f2");
-            }, 2500);
+        setTimeout(() => {
+          appendFriendMessage(
+            "ชั้นขอมีสระว่ายน้ำด้วยนะทุกคน ถ่ายรูปสวยๆ",
+            "f2",
+          );
+        }, 2500);
 
-            setTimeout(() => {
-                appendFriendMessage("โอเค งั้นหาที่พักตามนี้เลย พิมพ์ 'จบ' ให้ AI สรุปได้เลย", "f1");
-            }, 4000);
-        }
+        setTimeout(() => {
+          appendFriendMessage(
+            "โอเค งั้นหาที่พักตามนี้เลย พิมพ์ 'จบ' ให้ AI สรุปได้เลย",
+            "f1",
+          );
+        }, 4000);
+      }
 
-        // ฟังก์ชันช่วยแสดงข้อความฝั่งขวา (Me)
-        function appendMessage(text, align, senderType) {
-            const row = document.createElement('div');
-            row.className = `msg-row ${align}`;
-            row.innerHTML = `<div class="message msg-${senderType}">${escapeHtml(text)}</div>`;
-            chatbox.appendChild(row);
-            scrollToBottom();
-        }
+      function appendMessage(text, align, senderType) {
+        const row = document.createElement("div");
+        row.className = `msg-row ${align}`;
+        row.innerHTML = `<div class="message msg-${senderType}">${escapeHtml(text)}</div>`;
+        chatbox.appendChild(row);
+        scrollToBottom();
+      }
 
-        // ฟังก์ชันช่วยแสดงข้อความเพื่อนฝั่งซ้าย
-        function appendFriendMessage(text, avatarName) {
-            const row = document.createElement('div');
-            row.className = 'msg-row left';
-            row.innerHTML = `
+      function appendFriendMessage(text, avatarName) {
+        const row = document.createElement("div");
+        row.className = "msg-row left";
+        row.innerHTML = `
                 <div class="avatar avatar-${avatarName}"></div>
                 <div class="message msg-friend">${escapeHtml(text)}</div>
             `;
-            chatbox.appendChild(row);
-            scrollToBottom();
-        }
+        chatbox.appendChild(row);
+        scrollToBottom();
+      }
 
-        // ฟังก์ชันแสดงข้อความระบบตรงกลาง
-        function appendSystemMessage(text) {
-            const sysMsg = document.createElement('div');
-            sysMsg.className = 'msg-sys';
-            sysMsg.textContent = text;
-            chatbox.appendChild(sysMsg);
-            scrollToBottom();
-        }
+      function appendSystemMessage(text) {
+        const sysMsg = document.createElement("div");
+        sysMsg.className = "msg-sys";
+        sysMsg.textContent = text;
+        chatbox.appendChild(sysMsg);
+        scrollToBottom();
+      }
 
-        // ฟังก์ชันจำลอง AI วิเคราะห์และสรุปผลหลังพิมพ์ "จบ"
-        function triggerAIAnalysis() {
-            const row = document.createElement('div');
-            row.className = 'msg-row left';
-            row.innerHTML = `
+      function triggerAIAnalysis() {
+        const row = document.createElement("div");
+        row.className = "msg-row left";
+        row.innerHTML = `
                 <div class="avatar avatar-ai"></div>
                 <div class="message msg-ai">🤖 วิเคราะห์ Constraints จากแชทสำเร็จ:<br>- จำนวนคน: 4 คน<br>- งบต่ำสุด (Min): 1,500 บ./คน<br>- เงื่อนไขพิเศษ: มีสระว่ายน้ำ</div>
             `;
-            chatbox.appendChild(row);
-            scrollToBottom();
+        chatbox.appendChild(row);
+        scrollToBottom();
 
-            setTimeout(() => {
-                addCard('สรุปแผนและโหวต (Consensus)', 'ระบบค้นหาพบที่พักที่ตรงเงื่อนไข 100% (Zero Hallucination) กรุณากดเพื่อโหวตครับ', 'เปิด LINE LIFF เพื่อโหวต', 'vote');
-            }, 1000);
+        setTimeout(() => {
+          addCard(
+            "สรุปแผนและโหวต (Consensus)",
+            "ระบบค้นหาพบที่พักที่ตรงเงื่อนไข 100% (Zero Hallucination) กรุณากดเพื่อโหวตครับ",
+            "เปิด LINE LIFF เพื่อโหวต",
+            "vote",
+          );
+        }, 1000);
+      }
+
+      function sendMockSlip() {
+        if (!paymentStage) {
+          alert(
+            "ต้องถึงขั้นตอนโอนเงินกองกลางก่อน จึงจะส่งสลิปให้ระบบตรวจได้ครับ",
+          );
+          return;
         }
 
-        // ฟังก์ชันส่งสลิปจำลอง (กดปุ่ม +)
-        function sendMockSlip() {
-            if (!paymentStage) {
-                alert("ต้องถึงขั้นตอนโอนเงินกองกลางก่อน จึงจะส่งสลิปให้ระบบตรวจได้ครับ");
-                return;
-            }
+        const row = document.createElement("div");
+        row.className = "msg-row right";
+        // ใช้รูปสลิปธนาคารจริงที่สร้างขึ้น
+        row.innerHTML = `<img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop" class="slip-img" alt="Bank Slip">`;
+        chatbox.appendChild(row);
+        scrollToBottom();
 
-            const row = document.createElement('div');
-            row.className = 'msg-row right';
-            row.innerHTML = `<img src="https://via.placeholder.com/150x200/06C755/FFF?text=Fake+Slip" class="slip-img">`;
-            chatbox.appendChild(row);
-            scrollToBottom();
+        setTimeout(processSlipAndBooking, 1000);
+      }
 
-            // เริ่มกระบวนการตรวจสอบสลิปอัตโนมัติ
-            setTimeout(processSlipAndBooking, 1000);
-        }
+      function processSlipAndBooking() {
+        const msg1 = document.createElement("div");
+        msg1.className = "msg-row left";
+        msg1.innerHTML = `<div class="avatar avatar-ai"></div><div class="message msg-ai">🤖 [Vision OCR] ตรวจสลิปสำเร็จ!<br>ยอดเงิน: 1,450 บ.<br>Ref: R12398485X<br><br>✅ ยอดกองกลางครบ 100% แล้ว</div>`;
+        chatbox.appendChild(msg1);
+        scrollToBottom();
 
-        function processSlipAndBooking() {
-            const msg1 = document.createElement('div');
-            msg1.className = 'msg-row left';
-            msg1.innerHTML = `<div class="avatar avatar-ai"></div><div class="message msg-ai">🤖 [Vision OCR] ตรวจสลิปสำเร็จ!<br>ยอดเงิน: 1,450 บ.<br>Ref: 012398485X<br><br>✅ ยอดกองกลางครบ 100% แล้ว</div>`;
-            chatbox.appendChild(msg1);
-            scrollToBottom();
+        setTimeout(() => {
+          const msg2 = document.createElement("div");
+          msg2.className = "msg-row left";
+          msg2.innerHTML = `<div class="avatar avatar-ai"></div><div class="message msg-ai">🤖 [VCC Engine] สร้างบัตรชั่วคราวสำเร็จ กำลังชำระเงินตัดบัตรกับ B2B Aggregator...</div>`;
+          chatbox.appendChild(msg2);
+        }, 1500);
 
-            setTimeout(() => {
-                const msg2 = document.createElement('div');
-                msg2.className = 'msg-row left';
-                msg2.innerHTML = `<div class="avatar avatar-ai"></div><div class="message msg-ai">🤖 [VCC Engine] สร้างบัตรชั่วคราวสำเร็จ กำลังชำระเงินตัดบัตรกับ B2B Aggregator...</div>`;
-                chatbox.appendChild(msg2);
-            }
-            , 1500);
+        setTimeout(() => {
+          appendSystemMessage("✅ จองที่พักสำเร็จ!");
 
-            setTimeout(() => {
-                appendSystemMessage('✅ จองที่พักสำเร็จ!');
-                
-                const fileHtml = `
+          const fileHtml = `
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 5px;">
                         <div style="font-size: 32px;">📄</div>
                         <div>
@@ -507,29 +562,33 @@
                         Check-in: เสาร์นี้ 14:00 น.
                     </div>
                 `;
-                addCard('ตั๋วที่พัก (Confirmed)', fileHtml, '⬇ ดาวน์โหลด PDF', 'download');
-                paymentStage = false; // จบกระบวนการ
-            }, 3000);
+          addCard(
+            "ตั๋วที่พัก (Confirmed)",
+            fileHtml,
+            "⬇ ดาวน์โหลด PDF",
+            "download",
+          );
+          paymentStage = false;
+        }, 3000);
+      }
+
+      function addCard(title, body, btnText, type) {
+        const row = document.createElement("div");
+        row.className = "msg-row left";
+
+        let btnClass = "flex-btn";
+        let onclickAction = "";
+
+        if (type === "download") {
+          btnClass += " download";
+          onclickAction = "alert('กำลังดาวน์โหลดไฟล์ PDF...')";
+        } else if (type === "qr") {
+          onclickAction = "openQRLiff()";
+        } else {
+          onclickAction = "openLiff()";
         }
 
-        // ฟังก์ชันสร้างการ์ด Flex Message
-        function addCard(title, body, btnText, type) {
-            const row = document.createElement('div');
-            row.className = 'msg-row left';
-            
-            let btnClass = 'flex-btn';
-            let onclickAction = '';
-            
-            if (type === 'download') {
-                btnClass += ' download';
-                onclickAction = "alert('กำลังดาวน์โหลดไฟล์ PDF...')";
-            } else if (type === 'qr') {
-                onclickAction = "openQRLiff()";
-            } else {
-                onclickAction = "openLiff()";
-            }
-            
-            row.innerHTML = `
+        row.innerHTML = `
                 <div class="avatar avatar-ai"></div>
                 <div class="flex-card">
                     <div class="flex-header">${title}</div>
@@ -537,17 +596,17 @@
                     <div class="${btnClass}" onclick="${onclickAction}">${btnText}</div>
                 </div>
             `;
-            chatbox.appendChild(row);
-            scrollToBottom();
-        }
+        chatbox.appendChild(row);
+        scrollToBottom();
+      }
 
-        // ฟังก์ชันเปิดหน้าจอ LIFF โหวต
-        function openLiff() {
-            const liffHeader = document.querySelector('.liff-header');
-            const liffContent = document.querySelector('.liff-content');
-            
-            liffHeader.innerHTML = 'Hotel Consensus (LIFF) <span class="close-liff" onclick="closeLiff()">✕</span>';
-            liffContent.innerHTML = `
+      function openLiff() {
+        const liffHeader = document.querySelector(".liff-header");
+        const liffContent = document.querySelector(".liff-content");
+
+        liffHeader.innerHTML =
+          'Hotel Consensus (LIFF) <span class="close-liff" onclick="closeLiff()">✕</span>';
+        liffContent.innerHTML = `
                 <p>🤖 Constraint Solver คำนวณให้แล้ว! จากงบต่ำสุดคือ 1,500 บ./คน (รวม = 6,000 บ.)</p>
                 <div class="hotel-card" style="border: 2px solid var(--line-green);">
                     <h4 style="margin:0 0 5px 0;">⭐ ตัวเลือก 1 (แนะนำ)</h4>
@@ -560,47 +619,55 @@
                 <br>
                 <button class="confirm-btn" onclick="liffAction()">กดยืนยันแผนที่ 1</button>
             `;
-            liffApp.classList.add('active');
-        }
+        liffApp.classList.add("active");
+      }
 
-        // ฟังก์ชันเปิดหน้าจอ LIFF QR Code
-        function openQRLiff() {
-            const liffHeader = document.querySelector('.liff-header');
-            const liffContent = document.querySelector('.liff-content');
-            
-            liffHeader.innerHTML = 'My PromptPay QR <span class="close-liff" onclick="closeLiff()">✕</span>';
-            liffContent.innerHTML = `
+      function openQRLiff() {
+        const liffHeader = document.querySelector(".liff-header");
+        const liffContent = document.querySelector(".liff-content");
+
+        liffHeader.innerHTML =
+          'My PromptPay QR <span class="close-liff" onclick="closeLiff()">✕</span>';
+        liffContent.innerHTML = `
                 <div style="text-align: center; padding-top: 10px;">
                     <p style="font-weight: bold; color: #0f3460; margin-bottom: 5px;">สแกนเพื่อโอนเงินเข้ากองกลาง</p>
-                    <img src="https://via.placeholder.com/200x200/06C755/FFF?text=QR+Code" style="margin: 10px auto; border-radius: 10px; border: 4px solid #06C755; width: 180px; display: block;">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=300&auto=format&fit=crop" style="margin: 10px auto; border-radius: 10px; border: 4px solid #06C755; width: 160px; height: 160px; object-fit: cover; display: block;">
                     <p style="font-size: 22px; font-weight: bold; color: #333; margin: 10px 0;">1,450.00 THB</p>
                     <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Ref: #TRIP-HUAHIN-2026</p>
                     <button class="confirm-btn" style="background-color: #0f3460;" onclick="closeLiff()">ปิดหน้าต่าง</button>
                 </div>
             `;
-            liffApp.classList.add('active');
-        }
+        liffApp.classList.add("active");
+      }
 
-        function closeLiff() {
-            liffApp.classList.remove('active');
-        }
+      function closeLiff() {
+        liffApp.classList.remove("active");
+      }
 
-        function liffAction() {
-            closeLiff();
-            paymentStage = true; // เปิดโหมดรอรับสลิป
-            setTimeout(() => {
-                appendSystemMessage('โหวตสำเร็จ! เริ่มสร้างบัญชีกองกลาง (Escrow) 💳');
-                addCard('💰 ชำระเงินกองกลาง', 'ยอดรวม: 5,800 บาท<br>หาร 4 คน = 1,450 บาท/คน<br><br>Scan QR Code หรือกดปุ่ม ➕ ส่งสลิปโอนเงินในแชทนี้', 'ดู QR Code รายบุคคล', 'qr');
-            }, 500);
-        }
+      function liffAction() {
+        closeLiff();
+        paymentStage = true;
+        setTimeout(() => {
+          appendSystemMessage("โหวตสำเร็จ! เริ่มสร้างบัญชีกองกลาง (Escrow) 💳");
+          addCard(
+            "💰 ชำระเงินกองกลาง",
+            "ยอดรวม: 5,800 บาท<br>หาร 4 คน = 1,450 บาท/คน<br><br>Scan QR Code หรือกดปุ่ม ➕ ส่งสลิปโอนเงินในแชทนี้",
+            "ดู QR Code รายบุคคล",
+            "qr",
+          );
+        }, 500);
+      }
 
-        function scrollToBottom() {
-            chatbox.scrollTop = chatbox.scrollHeight;
-        }
+      function scrollToBottom() {
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }
 
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
+      function escapeHtml(text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
     </script>
-</body>
+  </body>
 </html>
