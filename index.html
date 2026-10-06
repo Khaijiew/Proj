@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Travel Concierge - Demo</title>
     <style>
+<<<<<<< HEAD
       :root {
         --line-green: #06c755;
         --chat-bg: #8b9eb0;
@@ -39,20 +40,106 @@
         flex-direction: column;
         margin-top: 10px;
       }
+=======
+        :root {
+            --line-green: #06C755;
+            --chat-bg: #8b9eb0;
+            --msg-sent: #06C755;
+            --msg-recv: #FFFFFF;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            /* เพิ่ม padding ด้านล่างเผื่อพื้นที่ให้ Netlify Watermark ไม่บัง */
+            padding-bottom: 60px;
+            box-sizing: border-box;
+        }
+        
+        /* กรอบโทรศัพท์จำลอง */
+        .phone-mockup {
+            width: 375px;
+            height: 780px; /* ลดความสูงลงเล็กน้อยเพื่อให้มีพื้นที่หายใจ */
+            background-color: #fff;
+            border: 12px solid #333;
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+        }
+        
+        /* หัวแชท LINE */
+        .chat-header {
+            background-color: #272727;
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
 
-      /* หัวแชท LINE */
-      .chat-header {
-        background-color: #272727;
-        color: white;
-        padding: 15px 20px;
-        font-size: 18px;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        z-index: 10;
-      }
+        /* พื้นที่แชท */
+        .chat-body {
+            flex: 1;
+            background-color: var(--chat-bg);
+            padding: 20px 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
+        /* กล่องข้อความพร้อม Avatar */
+        .message-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            max-width: 85%;
+            animation: fadeIn 0.4s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+            flex-shrink: 0;
+        }
+        .message-row.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .message-row.ai, .message-row.friend {
+            align-self: flex-start;
+        }
+>>>>>>> f26810f8d03b6f1559eccd5d8e8321c82532c388
+
+        /* รูปโปรไฟล์เล็กๆ ในแชท */
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .avatar.ai-av { background-color: #06C755; }
+        .avatar.friend1 { background-color: #ff6b6b; }
+        .avatar.friend2 { background-color: #48dbfb; }
+
+<<<<<<< HEAD
       /* พื้นที่แชท */
       .chat-body {
         flex: 1;
@@ -304,9 +391,206 @@
         to {
           opacity: 1;
           transform: translateY(0);
+=======
+        .message-content-wrapper {
+            display: flex;
+            flex-direction: column;
         }
-      }
+        .sender-name {
+            font-size: 11px;
+            color: #222;
+            margin-bottom: 2px;
+            margin-left: 4px;
+            font-weight: bold;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #333;
+            word-break: break-word;
+        }
+        .msg-ai {
+            background-color: var(--msg-recv);
+            border-bottom-left-radius: 4px;
+        }
+        .msg-user {
+            background-color: var(--line-green);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .msg-friend {
+            background-color: var(--msg-recv);
+            border-bottom-left-radius: 4px;
+        }
+        .msg-sys {
+            background-color: rgba(0,0,0,0.4);
+            color: white;
+            align-self: center;
+            font-size: 12px;
+            border-radius: 20px;
+            padding: 5px 15px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* การ์ด Flex Message */
+        .flex-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            width: 250px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            align-self: flex-start;
+            animation: fadeIn 0.4s ease-out forwards;
+            flex-shrink: 0;
+        }
+        .flex-header {
+            background-color: #0f3460;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .flex-body {
+            padding: 15px;
+            color: #333;
+            font-size: 13px;
+        }
+        .flex-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            background-color: #f1f1f1;
+            color: #333;
+            text-decoration: none;
+            border-top: 1px solid #ddd;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .flex-btn.download {
+            background-color: var(--line-green);
+            color: white;
+            border: none;
+        }
+        
+        /* ภาพสลิปโอนเงินจำลอง */
+        .slip-img {
+            width: 160px;
+            border-radius: 12px;
+            align-self: flex-end;
+            border: 2px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        /* ช่องพิมพ์ข้อความด้านล่าง */
+        .chat-input-bar {
+            background-color: #f7f7f7;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid #ddd;
+            /* เพิ่ม padding ด้านล่างเพื่อไม่ให้ชิดขอบเคสโทรศัพท์เกินไป */
+            padding-bottom: 15px;
+        }
+        .add-media-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+            padding: 0 4px;
+        }
+        .chat-input-bar input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+        .send-btn {
+            background-color: var(--line-green);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* หน้าต่าง LIFF Overlay จำลอง */
+        .liff-overlay {
+            position: absolute;
+            bottom: -100%; 
+            left: 0;
+            width: 100%;
+            height: 85%;
+            background-color: white;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.2);
+        }
+        .liff-overlay.active {
+            bottom: 0;
+        }
+        .liff-header {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            color: #333;
+            position: relative;
+        }
+        .close-liff {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            cursor: pointer;
+            color: #888;
+        }
+        .liff-content {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            color: #333;
+        }
+        .hotel-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .confirm-btn {
+            background-color: var(--line-green);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: auto;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+>>>>>>> f26810f8d03b6f1559eccd5d8e8321c82532c388
+        }
     </style>
+<<<<<<< HEAD
   </head>
   <body>
     <!-- จำลองหน้าจอโทรศัพท์ -->
@@ -576,6 +860,206 @@
         liffTitle.innerHTML =
           'Hotel Consensus (LIFF) <span class="close-liff" onclick="closeLiff()">✕</span>';
         liffContent.innerHTML = `
+=======
+</head>
+<body>
+
+    <!-- จำลองหน้าจอโทรศัพท์ -->
+    <div class="phone-mockup">
+        <div class="chat-header">
+            <span>&lt; แก็งค์ทริปหัวหิน (4)</span>
+            <span>≡</span>
+        </div>
+        
+        <div class="chat-body" id="chatbox">
+            <div class="message msg-sys">AI Concierge เข้าร่วมกลุ่มแล้ว</div>
+            
+            <div class="message-row friend">
+                <div class="avatar friend1">บ</div>
+                <div class="message-content-wrapper">
+                    <div class="sender-name">บอย</div>
+                    <div class="message msg-friend">ทริปหัวหินเสาร์นี้ใครว่างบ้าง พิมพ์ "เริ่ม" ให้ AI บันทึกข้อมูลได้เลย</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- แถบพิมพ์ข้อความแชท -->
+        <div class="chat-input-bar">
+            <button class="add-media-btn" onclick="sendSlip()" title="ส่งสลิปโอนเงิน">➕</button>
+            <input type="text" id="messageInput" placeholder="พิมพ์ข้อความ..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="sendMessage()">ส่ง</button>
+        </div>
+
+        <!-- จำลองหน้าต่าง LIFF Overlay -->
+        <div class="liff-overlay" id="liffApp">
+            <div class="liff-header" id="liffTitle">
+                Hotel Consensus (LIFF)
+                <span class="close-liff" onclick="closeLiff()">✕</span>
+            </div>
+            <div class="liff-content" id="liffContent">
+                <!-- เนื้อหาจะถูกสลับตามสถานะ -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const messageInput = document.getElementById('messageInput');
+        const liffApp = document.getElementById('liffApp');
+        const liffTitle = document.getElementById('liffTitle');
+        const liffContent = document.getElementById('liffContent');
+
+        let isRecordingActive = false;
+        let recordingStep = 0;
+        let friendMessagesTimeout = null;
+
+        function addMessageRow(senderType, name, text, avatarText, avatarClass) {
+            const row = document.createElement('div');
+            row.className = `message-row ${senderType}`;
+
+            let innerHtml = '';
+            if (senderType === 'user') {
+                innerHtml = `<div class="message msg-user">${text}</div>`;
+            } else {
+                innerHtml = `
+                    <div class="avatar ${avatarClass}">${avatarText}</div>
+                    <div class="message-content-wrapper">
+                        <div class="sender-name">${name}</div>
+                        <div class="message ${senderType === 'ai' ? 'msg-ai' : 'msg-friend'}">${text}</div>
+                    </div>
+                `;
+            }
+            row.innerHTML = innerHtml;
+            chatbox.appendChild(row);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function addSysMsg(text) {
+            const div = document.createElement('div');
+            div.className = 'message msg-sys';
+            div.innerHTML = text;
+            chatbox.appendChild(div);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function addCard(title, body, btnText, isDownload = false, actionType = 'vote') {
+            const div = document.createElement('div');
+            div.className = 'flex-card';
+            const btnClass = isDownload ? 'flex-btn download' : 'flex-btn';
+            let onclickAction = 'openVoteLiff()';
+            if (actionType === 'qr') onclickAction = 'openQRLiff()';
+            if (actionType === 'download') onclickAction = 'alert("กำลังดาวน์โหลดไฟล์ E-Voucher PDF เรียบร้อยครับ")';
+
+            div.innerHTML = `
+                <div class="flex-header">${title}</div>
+                <div class="flex-body">${body}</div>
+                <div class="${btnClass}" onclick="${onclickAction}">${btnText}</div>
+            `;
+            chatbox.appendChild(div);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function addSlipImage() {
+            const img = document.createElement('img');
+            img.src = 'https://images.unsplash.com/photo-1556742049-0a67d553c245?auto=format&fit=crop&w=400&q=80'; // รูปตัวอย่างสลิปสมจริง
+            img.className = 'slip-img';
+            img.title = 'คลิกเพื่อดูสลิปเต็ม';
+            chatbox.appendChild(img);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            // แสดงข้อความที่เราพิมพ์
+            addMessageRow('user', 'Me', text, '', '');
+            messageInput.value = '';
+
+            // ตรวจสอบคำสั่ง
+            if (text === 'เริ่ม') {
+                isRecordingActive = true;
+                setTimeout(() => {
+                    addSysMsg('🤖 เริ่มบันทึกข้อมูล (AI กำลังดักฟังเงื่อนไขในกลุ่ม)');
+                    startFriendChatSimulation();
+                }, 500);
+            } else if (text === 'หยุด') {
+                isRecordingActive = false;
+                if (friendMessagesTimeout) clearTimeout(friendMessagesTimeout);
+                setTimeout(() => {
+                    addSysMsg('⏸️ หยุดบันทึกข้อมูลเรียบร้อย');
+                }, 500);
+            } else if (text === 'จบ' && isRecordingActive) {
+                isRecordingActive = false;
+                if (friendMessagesTimeout) clearTimeout(friendMessagesTimeout);
+                setTimeout(() => {
+                    triggerAISummary();
+                }, 800);
+            } else if (isRecordingActive) {
+                // ถ้าเปิดโหมดบันทึกอยู่ พิมพ์อะไรเพิ่ม AI จะรับทราบ
+                setTimeout(() => {
+                    addMessageRow('ai', 'AI Concierge', 'รับทราบเงื่อนไขเพิ่มเติมครับ 👍', 'AI', 'ai-av');
+                }, 600);
+            }
+        }
+
+        // จำลองเพื่อนในกลุ่มพิมพ์คุยรายละเอียดต่อหลังกด "เริ่ม"
+        function startFriendChatSimulation() {
+            recordingStep = 1;
+            friendMessagesTimeout = setTimeout(() => {
+                if(!isRecordingActive) return;
+                addMessageRow('friend', 'แจน', 'เราขอไปค้างคืนวันเสาร์นะ งบเราประมาณ 2,000 บาทจ้า', 'แจน', 'friend2');
+                
+                friendMessagesTimeout = setTimeout(() => {
+                    if(!isRecordingActive) return;
+                    addMessageRow('friend', 'ต้น', 'ผมขอมีสระว่ายน้ำด้วยนะ อยากเล่นน้ำ งบผม 1,500 ครับ', 'ต้น', 'friend1');
+                    
+                    friendMessagesTimeout = setTimeout(() => {
+                        if(!isRecordingActive) return;
+                        addMessageRow('friend', 'บอย', 'สรุปสั้นๆ งบต่ำสุดคือ 1,500 นะทุกคน พิมพ์ "จบ" ให้ AI สรุปแผนเลย', 'บอย', 'friend1');
+                    }, 2500);
+                }, 2500);
+            }, 1500);
+        }
+
+        // AI สรุปข้อมูลและแสดงการ์ดโหวต
+        function triggerAISummary() {
+            addMessageRow('ai', 'AI Concierge', '🤖 สกัดข้อมูลเรียบร้อย!<br>- จำนวนคน: 4 คน<br>- งบต่ำสุด (Min Budget): 1,500 บ./คน<br>- ความต้องการ: มีสระว่ายน้ำ', 'AI', 'ai-av');
+            setTimeout(() => {
+                addCard('สรุปแผนและโหวต (Consensus)', 'ระบบพบที่พัก 2 แห่งที่ตรงเงื่อนไข 100% (Zero Hallucination) กรุณากดเพื่อโหวตครับ', 'เปิด LINE LIFF เพื่อโหวต', false, 'vote');
+            }, 1000);
+        }
+
+        // ปุ่มส่งสลิปจำลอง (กดปุ่ม ➕)
+        function sendSlip() {
+            addMessageRow('user', 'Me', 'ส่งสลิปโอนเงินกองกลางแล้วครับ', '', '');
+            setTimeout(() => {
+                addSlipImage();
+                setTimeout(() => {
+                    addMessageRow('ai', 'AI Concierge', '🤖 [Vision OCR] ตรวจสอบสลิปสำเร็จ!<br>ยอดเงิน: 1,450 บ. (ครบ 100% แล้ว)<br>Ref: R12398485X', 'AI', 'ai-av');
+                    setTimeout(() => {
+                        addMessageRow('ai', 'AI Concierge', '🤖 [VCC Engine] ออก Virtual Credit Card สำเร็จ กำลังชำระเงินกับโรงแรม...', 'AI', 'ai-av');
+                        setTimeout(() => {
+                            addSysMsg('✅ จองที่พักสำเร็จ!');
+                            addMessageRow('ai', 'AI Concierge', 'นี่คือหลักฐานการจอง (E-Voucher) สำหรับนำไป Check-in ครับ 🎉', 'AI', 'ai-av');
+                            addCard('ตั๋วที่พัก (Confirmed)', '<b>Hua Hin Pool Villa</b><br>Check-in: เสาร์นี้ 14:00 น.<br>Booking Ref: #BZT-2026-AGD', '⬇️️ ดาวน์โหลด PDF', true, 'download');
+                        }, 1200);
+                    }, 1200);
+                }, 1000);
+            }, 600);
+        }
+
+        // ควบคุม LIFF หน้าโหวต
+        function openVoteLiff() {
+            liffTitle.innerHTML = 'Hotel Consensus (LIFF) <span class="close-liff" onclick="closeLiff()">✕</span>';
+            liffContent.innerHTML = `
+>>>>>>> f26810f8d03b6f1559eccd5d8e8321c82532c388
                 <p>🤖 ระบบ Constraint Solver คำนวณให้แล้ว! จากงบต่ำสุดคือ 1,500 บ/คน (รวม 4 คน = 6,000 บ)</p>
                 <div class="hotel-card" style="border: 2px solid var(--line-green);">
                     <h4>⭐ ตัวเลือกที่ 1 (แนะนำ)</h4>
@@ -586,11 +1070,16 @@
                     <p>Beachfront Hotel<br>ราคา: 6,000 บาท / คืน<br>✅ ติดทะเล ✅ พอดีงบ</p>
                 </div>
                 <br>
+<<<<<<< HEAD
                 <button class="confirm-btn" onclick="voteAction()">กดยืนยันแผนที่ 1 (เข้าสู่กระบวนการ Escrow)</button>
+=======
+                <button class="confirm-btn" onclick="voteAction()">กดยืนยันแผนที่ 1</button>
+>>>>>>> f26810f8d03b6f1559eccd5d8e8321c82532c388
             `;
-        liffApp.classList.add("active");
-      }
+            liffApp.classList.add('active');
+        }
 
+<<<<<<< HEAD
       function voteAction() {
         closeLiff();
         setTimeout(() => {
@@ -618,12 +1107,27 @@
         liffTitle.innerHTML =
           'PromptPay QR (Escrow) <span class="close-liff" onclick="closeLiff()">✕</span>';
         liffContent.innerHTML = `
+=======
+        function voteAction() {
+            closeLiff();
+            setTimeout(() => {
+                addSysMsg('โหวตสำเร็จ! เริ่มสร้างบัญชีกองกลาง (Escrow) 💳');
+                addCard('💰 ชำระเงินกองกลาง', 'ยอดรวม: 5,800 บาท<br>หาร 4 คน = 1,450 บาท/คน<br><br>กดปุ่มด้านล่างเพื่อดู QR Code รายบุคคล', 'ดู QR Code รายบุคคล', false, 'qr');
+            }, 500);
+        }
+
+        // ควบคุม LIFF หน้า QR Code
+        function openQRLiff() {
+            liffTitle.innerHTML = 'PromptPay QR Payment <span class="close-liff" onclick="closeLiff()">✕</span>';
+            liffContent.innerHTML = `
+>>>>>>> f26810f8d03b6f1559eccd5d8e8321c82532c388
                 <div style="text-align: center;">
                     <p style="font-weight: bold; color: #333;">สแกนเพื่อจ่ายเงินกองกลางส่วนของคุณ</p>
                     <div style="background: #f4f4f4; padding: 15px; border-radius: 12px; display: inline-block; margin: 10px 0; border: 1px solid #ddd;">
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=PromptPay-Mockup-1450" alt="PromptPay QR" style="display: block; margin: 0 auto;">
                     </div>
                     <h3 style="color: #06C755; margin: 5px 0;">1,450.00 บาท</h3>
+<<<<<<< HEAD
                     <p style="font-size: 12px; color: #666;">PromptPay: 089-XXX-XXXX (Escrow กองกลางทริปหัวหิน)</p>
                     <p style="font-size: 11px; color: #888; margin-top: 10px;">💡 เมื่อโอนเสร็จแล้ว กดปุ่ม ➕ ที่ช่องพิมพ์แชทเพื่อส่งสลิปให้ระบบ Vision OCR ตรวจสอบอัตโนมัติ</p>
                 </div>
@@ -693,6 +1197,19 @@
       function closeLiff() {
         liffApp.classList.remove("active");
       }
+=======
+                    <p style="font-size: 12px; color: #666;">PromptPay: 089-XXX-XXXX (กองกลางทริปหัวหิน)</p>
+                    <p style="font-size: 11px; color: #888; margin-top: 10px;">💡 เมื่อโอนเสร็จแล้ว กดปุ่ม ➕ ที่ช่องพิมพ์แชทเพื่อส่งสลิปได้เลยครับ</p>
+                </div>
+                <button class="confirm-btn" style="background-color: #666;" onclick="closeLiff()">ปิดหน้าต่าง</button>
+            `;
+            liffApp.classList.add('active');
+        }
+
+        function closeLiff() {
+            liffApp.classList.remove('active');
+        }
+>>>>>>> f26810f8d03b6f1559eccd5d8e8321c82532c388
     </script>
-  </body>
+</body>
 </html>
