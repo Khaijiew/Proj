@@ -21,7 +21,6 @@
         min-height: 100vh;
         margin: 0;
         flex-direction: column;
-        /* เพิ่ม padding ด้านล่างเผื่อพื้นที่ให้ Netlify Watermark ไม่บัง */
         padding-bottom: 60px;
         box-sizing: border-box;
       }
@@ -29,7 +28,7 @@
       /* กรอบโทรศัพท์จำลอง */
       .phone-mockup {
         width: 375px;
-        height: 780px; /* ลดความสูงลงเล็กน้อยเพื่อให้มีพื้นที่หายใจ */
+        height: 780px;
         background-color: #fff;
         border: 12px solid #333;
         border-radius: 40px;
@@ -213,7 +212,6 @@
         align-items: center;
         gap: 8px;
         border-top: 1px solid #ddd;
-        /* เพิ่ม padding ด้านล่างเพื่อไม่ให้ชิดขอบเคสโทรศัพท์เกินไป */
         padding-bottom: 15px;
       }
       .add-media-btn {
@@ -415,6 +413,8 @@
         const btnClass = isDownload ? "flex-btn download" : "flex-btn";
         let onclickAction = "openVoteLiff()";
         if (actionType === "qr") onclickAction = "openQRLiff()";
+        if (actionType === "leader_approve")
+          onclickAction = "openLeaderApproveLiff()";
         if (actionType === "download")
           onclickAction =
             'alert("กำลังดาวน์โหลดไฟล์ E-Voucher PDF เรียบร้อยครับ")';
@@ -431,7 +431,7 @@
       function addSlipImage() {
         const img = document.createElement("img");
         img.src =
-          "https://images.unsplash.com/photo-1556742049-0a67d553c245?auto=format&fit=crop&w=400&q=80"; // รูปตัวอย่างสลิปสมจริง
+          "https://images.unsplash.com/photo-1556742049-0a67d553c245?auto=format&fit=crop&w=400&q=80";
         img.className = "slip-img";
         img.title = "คลิกเพื่อดูสลิปเต็ม";
         chatbox.appendChild(img);
@@ -448,11 +448,9 @@
         const text = messageInput.value.trim();
         if (!text) return;
 
-        // แสดงข้อความที่เราพิมพ์
         addMessageRow("user", "Me", text, "", "");
         messageInput.value = "";
 
-        // ตรวจสอบคำสั่ง
         if (text === "เริ่ม") {
           isRecordingActive = true;
           setTimeout(() => {
@@ -472,7 +470,6 @@
             triggerAISummary();
           }, 800);
         } else if (isRecordingActive) {
-          // ถ้าเปิดโหมดบันทึกอยู่ พิมพ์อะไรเพิ่ม AI จะรับทราบ
           setTimeout(() => {
             addMessageRow(
               "ai",
@@ -485,7 +482,6 @@
         }
       }
 
-      // จำลองเพื่อนในกลุ่มพิมพ์คุยรายละเอียดต่อหลังกด "เริ่ม"
       function startFriendChatSimulation() {
         recordingStep = 1;
         friendMessagesTimeout = setTimeout(() => {
@@ -522,7 +518,6 @@
         }, 1500);
       }
 
-      // AI สรุปข้อมูลและแสดงการ์ดโหวต
       function triggerAISummary() {
         addMessageRow(
           "ai",
@@ -542,50 +537,41 @@
         }, 1000);
       }
 
-      // ปุ่มส่งสลิปจำลอง (กดปุ่ม ➕)
+      // ปุ่มส่งสลิปจำลอง (กดปุ่ม ➕) ผ่านกระบวนการ Step 01 -> 02 -> 03 -> 04 -> 05
       function sendSlip() {
-        addMessageRow("user", "Me", "ส่งสลิปโอนเงินกองกลางแล้วครับ", "", "");
+        addMessageRow(
+          "user",
+          "Me",
+          "ส่งสลิปโอนเงินกองกลางส่วนของฉันแล้วครับ",
+          "",
+          "",
+        );
         setTimeout(() => {
           addSlipImage();
           setTimeout(() => {
+            // Step 02: Vision OCR ตรวจสลิป
             addMessageRow(
               "ai",
               "AI Concierge",
-              "🤖 [Vision OCR] ตรวจสอบสลิปสำเร็จ!<br>ยอดเงิน: 1,450 บ. (ครบ 100% แล้ว)<br>Ref: R12398485X",
+              "🤖 [Step 02: Vision OCR] สแกนสลิปสำเร็จ!<br>ยอดเงิน: 1,450 บ. (Escrow Balance ครบ 100% แล้ว)",
               "AI",
               "ai-av",
             );
             setTimeout(() => {
-              addMessageRow(
-                "ai",
-                "AI Concierge",
-                "🤖 [VCC Engine] ออก Virtual Credit Card สำเร็จ กำลังชำระเงินกับโรงแรม...",
-                "AI",
-                "ai-av",
+              // Step 03: หัวหน้ากดกดยืนยันผ่าน LIFF
+              addCard(
+                "👑 ขั้นตอนที่ 03: หัวหน้าทริปยืนยัน",
+                "ยอดเงินกองกลางครบ 100% แล้ว! หัวหน้าทริปกรุณากด Approve ยืนยันการจองผ่าน LINE LIFF",
+                "เปิด LIFF ยืนยันการจอง",
+                false,
+                "leader_approve",
               );
-              setTimeout(() => {
-                addSysMsg("✅ จองที่พักสำเร็จ!");
-                addMessageRow(
-                  "ai",
-                  "AI Concierge",
-                  "นี่คือหลักฐานการจอง (E-Voucher) สำหรับนำไป Check-in ครับ 🎉",
-                  "AI",
-                  "ai-av",
-                );
-                addCard(
-                  "ตั๋วที่พัก (Confirmed)",
-                  "<b>Hua Hin Pool Villa</b><br>Check-in: เสาร์นี้ 14:00 น.<br>Booking Ref: #BZT-2026-AGD",
-                  "⬇️️ ดาวน์โหลด PDF",
-                  true,
-                  "download",
-                );
-              }, 1200);
-            }, 1200);
+            }, 1000);
           }, 1000);
         }, 600);
       }
 
-      // ควบคุม LIFF หน้าโหวต
+      // LIFF หน้าโหวตโรงแรม
       function openVoteLiff() {
         liffTitle.innerHTML =
           'Hotel Consensus (LIFF) <span class="close-liff" onclick="closeLiff()">✕</span>';
@@ -600,7 +586,7 @@
                     <p>Beachfront Hotel<br>ราคา: 6,000 บาท / คืน<br>✅ ติดทะเล ✅ พอดีงบ</p>
                 </div>
                 <br>
-                <button class="confirm-btn" onclick="voteAction()">กดยืนยันแผนที่ 1</button>
+                <button class="confirm-btn" onclick="voteAction()">กดยืนยันแผนที่ 1 (เข้าสู่กระบวนการ Escrow)</button>
             `;
         liffApp.classList.add("active");
       }
@@ -608,9 +594,17 @@
       function voteAction() {
         closeLiff();
         setTimeout(() => {
-          addSysMsg("โหวตสำเร็จ! เริ่มสร้างบัญชีกองกลาง (Escrow) 💳");
+          // Step 01: โอนเข้า Escrow
+          addSysMsg("🎉 โหวตเลือกที่พักสำเร็จ!");
+          addMessageRow(
+            "ai",
+            "AI Concierge",
+            "🤖 [Step 01: โอนเข้า Escrow]<br>สร้างบัญชีกองกลางสำเร็จ ขอเชิญเพื่อนๆ สแกน Dynamic PromptPay QR ยอดเฉพาะรายบุคคลครับ",
+            "AI",
+            "ai-av",
+          );
           addCard(
-            "💰 ชำระเงินกองกลาง",
+            "💰 ชำระเงินกองกลาง (Escrow)",
             "ยอดรวม: 5,800 บาท<br>หาร 4 คน = 1,450 บาท/คน<br><br>กดปุ่มด้านล่างเพื่อดู QR Code รายบุคคล",
             "ดู QR Code รายบุคคล",
             false,
@@ -619,10 +613,10 @@
         }, 500);
       }
 
-      // ควบคุม LIFF หน้า QR Code
+      // LIFF หน้า QR Code
       function openQRLiff() {
         liffTitle.innerHTML =
-          'PromptPay QR Payment <span class="close-liff" onclick="closeLiff()">✕</span>';
+          'PromptPay QR (Escrow) <span class="close-liff" onclick="closeLiff()">✕</span>';
         liffContent.innerHTML = `
                 <div style="text-align: center;">
                     <p style="font-weight: bold; color: #333;">สแกนเพื่อจ่ายเงินกองกลางส่วนของคุณ</p>
@@ -630,12 +624,70 @@
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=PromptPay-Mockup-1450" alt="PromptPay QR" style="display: block; margin: 0 auto;">
                     </div>
                     <h3 style="color: #06C755; margin: 5px 0;">1,450.00 บาท</h3>
-                    <p style="font-size: 12px; color: #666;">PromptPay: 089-XXX-XXXX (กองกลางทริปหัวหิน)</p>
-                    <p style="font-size: 11px; color: #888; margin-top: 10px;">💡 เมื่อโอนเสร็จแล้ว กดปุ่ม ➕ ที่ช่องพิมพ์แชทเพื่อส่งสลิปได้เลยครับ</p>
+                    <p style="font-size: 12px; color: #666;">PromptPay: 089-XXX-XXXX (Escrow กองกลางทริปหัวหิน)</p>
+                    <p style="font-size: 11px; color: #888; margin-top: 10px;">💡 เมื่อโอนเสร็จแล้ว กดปุ่ม ➕ ที่ช่องพิมพ์แชทเพื่อส่งสลิปให้ระบบ Vision OCR ตรวจสอบอัตโนมัติ</p>
                 </div>
                 <button class="confirm-btn" style="background-color: #666;" onclick="closeLiff()">ปิดหน้าต่าง</button>
             `;
         liffApp.classList.add("active");
+      }
+
+      // LIFF หน้าหัวหน้าทริปกดยืนยัน (Step 03: Human-in-the-Loop)
+      function openLeaderApproveLiff() {
+        liffTitle.innerHTML =
+          'Trip Leader Approval (LIFF) <span class="close-liff" onclick="closeLiff()">✕</span>';
+        liffContent.innerHTML = `
+                <div style="text-align: center; padding-top: 10px;">
+                    <div style="font-size: 48px; margin-bottom: 10px;">👑</div>
+                    <h3 style="color: #0f3460; margin: 0 0 10px 0;">ยืนยันคำสั่งจองที่พัก</h3>
+                    <p style="font-size: 14px; color: #555; line-height: 1.5;">ยอดเงินกองกลางครบ 100% ใน Escrow แล้ว (5,800 บาท)<br>โรงแรม: <b>Hua Hin Pool Villa</b><br>กรุณากดปุ่มด้านล่างเพื่อออก VCC และตัดจองอัตโนมัติ</p>
+                </div>
+                <button class="confirm-btn" onclick="executeFulfillmentSteps()">Approve & Execute Booking</button>
+            `;
+        liffApp.classList.add("active");
+      }
+
+      // Step 04 & 05: ออก VCC ทันที + ตัดจองและส่งตั๋ว
+      function executeFulfillmentSteps() {
+        closeLiff();
+        setTimeout(() => {
+          // Step 04
+          addMessageRow(
+            "ai",
+            "AI Concierge",
+            "🤖 [Step 04: ออก VCC ทันที]<br>ยิง API สั่ง Gateway ออกบัตรเสมือน (Virtual Credit Card) วงเงินเป๊ะตามยอดจอง 5,800 บาทเรียบร้อย",
+            "AI",
+            "ai-av",
+          );
+
+          setTimeout(() => {
+            // Step 05
+            addMessageRow(
+              "ai",
+              "AI Concierge",
+              "🤖 [Step 05: ตัดจองและส่งตั๋ว]<br>ยิง Payload จอง B2B API (Expedia / Duffel Sandbox) สำเร็จ!",
+              "AI",
+              "ai-av",
+            );
+            setTimeout(() => {
+              addSysMsg("✅ ดำเนินการจองเสร็จสิ้น!");
+              addMessageRow(
+                "ai",
+                "AI Concierge",
+                "ระบบส่ง E-Voucher PDF กลับเข้ามาในแชทกลุ่มเรียบร้อยครับ 🎉",
+                "AI",
+                "ai-av",
+              );
+              addCard(
+                "ตั๋วที่พัก (Confirmed E-Voucher)",
+                "<b>Hua Hin Pool Villa</b><br>Check-in: เสาร์นี้ 14:00 น.<br>Booking Ref: #BZT-2026-AGD",
+                "⬇ ดาวน์โหลด PDF",
+                true,
+                "download",
+              );
+            }, 1000);
+          }, 1200);
+        }, 800);
       }
 
       function closeLiff() {
